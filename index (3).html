@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Klovix — Formulario de Alta de Cliente</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --card: #13131a;
+  --card-hover: #1a1a24;
+  --border: #2a2a3a;
+  --border-focus: #6c5ce7;
+  --accent: #6c5ce7;
+  --accent-light: #a29bfe;
+  --accent-glow: rgba(108,92,231,0.15);
+  --text: #e8e8f0;
+  --text-dim: #8888a8;
+  --text-muted: #55556a;
+  --success: #00b894;
+  --warning: #fdcb6e;
+  --danger: #e17055;
+  --white: #ffffff;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --font-display: 'Playfair Display', serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══ BACKGROUND ═══ */
+.bg-glow {
+  position: fixed;
+  top: -30%;
+  left: -20%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(108,92,231,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-glow-2 {
+  position: fixed;
+  bottom: -30%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(0,184,148,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══ CONTAINER ═══ */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 16px 100px;
+}
+
+/* ═══ HEADER ═══ */
+.header {
+  text-align: center;
+  padding: 40px 0 24px;
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+.header p {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ═══ PROGRESS ═══ */
+.progress-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 16px 0 12px;
+  margin-bottom: 24px;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.progress-info .current-step {
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
+/* ═══ STEPS ═══ */
+.step {
+  display: none;
+  animation: fadeSlideIn 0.4s ease;
+}
+.step.active { display: block; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-header {
+  margin-bottom: 24px;
+}
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent-light);
+  margin-bottom: 8px;
+}
+.step-number::before {
+  content: '';
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.step-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+}
+.step-desc {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ═══ FORM GROUPS ═══ */
+.field {
+  margin-bottom: 20px;
+}
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.field label .required {
+  color: var(--accent-light);
+  margin-left: 2px;
+}
+.field label .optional {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px; /* prevents iOS zoom */
+  transition: all 0.2s ease;
+  outline: none;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--card-hover);
+}
+textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+}
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238888a8'%3E%3Cpath d='M6 8.5L1 3.5h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+::placeholder { color: var(--text-muted); }
+
+/* ═══ CHECKBOX / RADIO GRID ═══ */
+.check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 380px) {
+  .check-grid { grid-template-columns: 1fr; }
+}
+.check-grid.single-col {
+  grid-template-columns: 1fr;
+}
+.check-item {
+  position: relative;
+}
+.check-item input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.check-item label.check-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+.check-item input:checked + .check-label {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  color: var(--white);
+}
+.check-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+.check-item input:checked + .check-label .check-icon {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+}
+.check-item input[type="radio"] + .check-label .check-icon {
+  border-radius: 50%;
+}
+
+/* ═══ INFO BOX ═══ */
+.info-box {
+  background: rgba(108,92,231,0.08);
+  border: 1px solid rgba(108,92,231,0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.info-box .icon { margin-right: 6px; }
+
+/* ═══ DIVIDER ═══ */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* ═══ BUTTONS ═══ */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+.btn {
+  flex: 1;
+  display: inline-block;
+  text-decoration: none;
+  padding: 16px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #7c6cf0);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(108,92,231,0.3);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 10px rgba(108,92,231,0.2);
+}
+.btn-secondary {
+  background: var(--card);
+  color: var(--text-dim);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:active {
+  background: var(--card-hover);
+}
+.btn-submit {
+  background: linear-gradient(135deg, var(--success), #00d2a0);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(0,184,148,0.3);
+  font-size: 16px;
+  padding: 18px 24px;
+}
+
+/* ═══ REVIEW ═══ */
+.review-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.review-section h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(42,42,58,0.5);
+}
+.review-row:last-child { border-bottom: none; }
+.review-row .label { color: var(--text-muted); }
+.review-row .value { color: var(--text); font-weight: 500; text-align: right; max-width: 60%; word-break: break-word; }
+
+/* ═══ SUCCESS ═══ */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+  animation: fadeSlideIn 0.5s ease;
+}
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--success), #00d2a0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 36px;
+  box-shadow: 0 8px 32px rgba(0,184,148,0.3);
+}
+.success-screen h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.success-screen p {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* ═══ HELPER TEXT ═══ */
+.helper {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* ═══ TWO COL ═══ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 380px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+
+/* ═══ FILE ═══ */
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px;
+  background: var(--card);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.file-upload:active {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+.file-upload .upload-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.file-upload .upload-text {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.file-upload .upload-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.file-upload input { display: none; }
+.file-name {
+  font-size: 13px;
+  color: var(--success);
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">Klovix</div>
+    <p>Formulario de alta — Nuevo cliente<br>Completa los datos para comenzar tu estrategia</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 12.5%"></div>
+    </div>
+    <div class="progress-info">
+      <span class="current-step" id="stepLabel">Paso 1 de 8</span>
+      <span id="stepName">Tu negocio</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 1: DATOS DEL NEGOCIO -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step active" id="step1">
+    <div class="step-header">
+      <div class="step-number">Paso 1</div>
+      <div class="step-title">Cuéntanos sobre tu negocio</div>
+      <div class="step-desc">Datos básicos de tu empresa para personalizar tu estrategia.</div>
+    </div>
+
+    <div class="field">
+      <label>Nombre de la empresa / marca <span class="required">*</span></label>
+      <input type="text" id="empresa" placeholder="Ej: Clínica Dental Sonrisa" required>
+    </div>
+
+    <div class="field">
+      <label>Tu nombre completo <span class="required">*</span></label>
+      <input type="text" id="contacto" placeholder="Nombre y apellidos">
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>Teléfono <span class="required">*</span></label>
+        <input type="tel" id="telefono" placeholder="+34 600 000 000">
+      </div>
+      <div class="field">
+        <label>Email <span class="required">*</span></label>
+        <input type="email" id="email" placeholder="tu@email.com">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Página web <span class="optional">(opcional)</span></label>
+      <input type="url" id="web" placeholder="https://tuempresa.com">
+    </div>
+
+    <div class="field">
+      <label>Sector / industria <span class="required">*</span></label>
+      <select id="sector">
+        <option value="">Selecciona tu sector</option>
+        <option value="restauracion">Restauración / Hostelería</option>
+        <option value="inmobiliaria">Inmobiliaria</option>
+        <option value="clinica_salud">Clínica / Salud</option>
+        <option value="ecommerce">E-commerce / Tienda online</option>
+        <option value="abogados_asesoria">Abogados / Asesoría</option>
+        <option value="belleza_estetica">Belleza / Estética</option>
+        <option value="fitness_deporte">Fitness / Deporte</option>
+        <option value="educacion_formacion">Educación / Formación</option>
+        <option value="automocion">Automoción</option>
+        <option value="moda_retail">Moda / Retail</option>
+        <option value="tecnologia">Tecnología / SaaS</option>
+        <option value="construccion">Construcción / Reformas</option>
+        <option value="turismo_viajes">Turismo / Viajes</option>
+        <option value="consulting">Consultoría</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="field" id="sectorOtroWrap" style="display:none">
+      <label>Especifica tu sector</label>
+      <input type="text" id="sectorOtro" placeholder="Tu sector">
+    </div>
+
+    <div class="field">
+      <label>Localidad y provincia <span class="required">*</span></label>
+      <input type="text" id="localidad" placeholder="Ej: Tomelloso, Ciudad Real">
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 2: SERVICIOS / PRODUCTOS -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step2">
+    <div class="step-header">
+      <div class="step-number">Paso 2</div>
+      <div class="step-title">¿Qué vendes?</div>
+      <div class="step-desc">Necesitamos entender qué ofreces para crear el contenido y la estrategia adecuada.</div>
+    </div>
+
+    <div class="field">
+      <label>Describe tus productos o servicios principales <span class="required">*</span></label>
+      <textarea id="servicios" placeholder="Describe brevemente qué vendes, qué servicios ofreces, cuáles son los más populares o rentables..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Rango de precios aproximado <span class="optional">(opcional)</span></label>
+      <input type="text" id="precios" placeholder="Ej: Tratamientos desde 50€, consulta 30€...">
+      <div class="helper">Esto nos ayuda a enfocar las campañas al público correcto.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Qué te diferencia de la competencia? <span class="required">*</span></label>
+      <textarea id="diferenciacion" placeholder="¿Qué haces mejor que los demás? ¿Qué ofrecéis que otros no? ¿Tenéis alguna especialidad, garantía, años de experiencia...?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿Zona de actuación? <span class="required">*</span></label>
+      <select id="zona">
+        <option value="">Selecciona</option>
+        <option value="local">Local (mi ciudad / municipio)</option>
+        <option value="provincial">Provincial</option>
+        <option value="regional">Regional / Comunidad autónoma</option>
+        <option value="nacional">Nacional (toda España)</option>
+        <option value="internacional">Internacional</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 3: REDES SOCIALES ACTUALES -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step3">
+    <div class="step-header">
+      <div class="step-number">Paso 3</div>
+      <div class="step-title">Tus redes sociales</div>
+      <div class="step-desc">¿En qué plataformas estás ya presente? Déjalo en blanco si no tienes.</div>
+    </div>
+
+    <div class="field">
+      <label>Instagram <span class="optional">(URL o @usuario)</span></label>
+      <input type="text" id="instagram" placeholder="@tuempresa o enlace">
+    </div>
+
+    <div class="field">
+      <label>Facebook <span class="optional">(URL de la página)</span></label>
+      <input type="text" id="facebook" placeholder="facebook.com/tuempresa">
+    </div>
+
+    <div class="field">
+      <label>TikTok <span class="optional">(URL o @usuario)</span></label>
+      <input type="text" id="tiktok" placeholder="@tuempresa">
+    </div>
+
+    <div class="field">
+      <label>LinkedIn <span class="optional">(URL del perfil o empresa)</span></label>
+      <input type="text" id="linkedin" placeholder="linkedin.com/company/tuempresa">
+    </div>
+
+    <div class="field">
+      <label>YouTube <span class="optional">(URL del canal)</span></label>
+      <input type="text" id="youtube" placeholder="youtube.com/@tuempresa">
+    </div>
+
+    <div class="field">
+      <label>Google My Business / Maps <span class="optional">(¿Tienes ficha?)</span></label>
+      <select id="gmb">
+        <option value="">Selecciona</option>
+        <option value="si_verificado">Sí, verificado y activo</option>
+        <option value="si_no_activo">Sí, pero no lo uso / no está actualizado</option>
+        <option value="no">No tengo</option>
+        <option value="no_se">No lo sé</option>
+      </select>
+    </div>
+
+    <div class="info-box">
+      <span class="icon">💡</span> Si no tienes redes sociales, no te preocupes. Nosotros te las creamos y configuramos como parte del servicio.
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 4: PÚBLICO OBJETIVO -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step4">
+    <div class="step-header">
+      <div class="step-number">Paso 4</div>
+      <div class="step-title">Tu cliente ideal</div>
+      <div class="step-desc">Definir bien a quién nos dirigimos es clave para que la publicidad funcione.</div>
+    </div>
+
+    <div class="field">
+      <label>Rango de edad de tu cliente <span class="required">*</span></label>
+      <div class="check-grid">
+        <div class="check-item">
+          <input type="checkbox" id="edad_18_25" name="edad" value="18-25">
+          <label class="check-label" for="edad_18_25"><span class="check-icon">✓</span> 18-25 años</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="edad_25_35" name="edad" value="25-35">
+          <label class="check-label" for="edad_25_35"><span class="check-icon">✓</span> 25-35 años</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="edad_35_45" name="edad" value="35-45">
+          <label class="check-label" for="edad_35_45"><span class="check-icon">✓</span> 35-45 años</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="edad_45_55" name="edad" value="45-55">
+          <label class="check-label" for="edad_45_55"><span class="check-icon">✓</span> 45-55 años</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="edad_55" name="edad" value="55+">
+          <label class="check-label" for="edad_55"><span class="check-icon">✓</span> 55+ años</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="edad_todos" name="edad" value="todos">
+          <label class="check-label" for="edad_todos"><span class="check-icon">✓</span> Todos</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Género predominante del cliente <span class="required">*</span></label>
+      <div class="check-grid">
+        <div class="check-item">
+          <input type="checkbox" id="gen_hombres" name="genero" value="hombres">
+          <label class="check-label" for="gen_hombres"><span class="check-icon">✓</span> Mayoría hombres</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="gen_mujeres" name="genero" value="mujeres">
+          <label class="check-label" for="gen_mujeres"><span class="check-icon">✓</span> Mayoría mujeres</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="gen_ambos" name="genero" value="ambos">
+          <label class="check-label" for="gen_ambos"><span class="check-icon">✓</span> Ambos por igual</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="gen_empresas" name="genero" value="empresas">
+          <label class="check-label" for="gen_empresas"><span class="check-icon">✓</span> Empresas (B2B)</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Qué busca tu cliente cuando llega a ti? <span class="required">*</span></label>
+      <textarea id="busca_cliente" placeholder="Ej: Buscan solucionar un dolor de espalda, quieren reformar su casa, necesitan asesoría fiscal, buscan restaurante para celebración..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Intereses de tu cliente ideal <span class="optional">(opcional)</span></label>
+      <textarea id="intereses" placeholder="Ej: Fitness, moda, cocina, tecnología, decoración, coches, viajes... Todo lo que se te ocurra."></textarea>
+      <div class="helper">Esto nos ayuda a segmentar mejor los anuncios.</div>
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 5: OBJETIVOS -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step5">
+    <div class="step-header">
+      <div class="step-number">Paso 5</div>
+      <div class="step-title">Tus objetivos</div>
+      <div class="step-desc">¿Qué quieres conseguir con la publicidad y las redes sociales?</div>
+    </div>
+
+    <div class="field">
+      <label>¿Qué objetivos son prioritarios para ti? <span class="required">*</span></label>
+      <div class="check-grid single-col">
+        <div class="check-item">
+          <input type="checkbox" id="obj_leads" name="objetivo" value="leads">
+          <label class="check-label" for="obj_leads"><span class="check-icon">✓</span> 📞 Conseguir llamadas / contactos / leads</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="obj_ventas" name="objetivo" value="ventas">
+          <label class="check-label" for="obj_ventas"><span class="check-icon">✓</span> 🛒 Aumentar ventas directas</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="obj_marca" name="objetivo" value="marca">
+          <label class="check-label" for="obj_marca"><span class="check-icon">✓</span> 🏷️ Dar a conocer mi marca</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="obj_seguidores" name="objetivo" value="seguidores">
+          <label class="check-label" for="obj_seguidores"><span class="check-icon">✓</span> 📈 Crecer en seguidores / comunidad</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="obj_trafico" name="objetivo" value="trafico">
+          <label class="check-label" for="obj_trafico"><span class="check-icon">✓</span> 🌐 Llevar tráfico a mi web / tienda</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="obj_reputacion" name="objetivo" value="reputacion">
+          <label class="check-label" for="obj_reputacion"><span class="check-icon">✓</span> ⭐ Mejorar reputación / reseñas</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="obj_fidelizar" name="objetivo" value="fidelizar">
+          <label class="check-label" for="obj_fidelizar"><span class="check-icon">✓</span> 🤝 Fidelizar clientes existentes</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Has hecho publicidad antes en redes? <span class="required">*</span></label>
+      <select id="experiencia_ads">
+        <option value="">Selecciona</option>
+        <option value="nunca">Nunca he hecho publicidad</option>
+        <option value="poca">He probado algo pero sin resultados claros</option>
+        <option value="media">He invertido algo y he tenido resultados</option>
+        <option value="mucha">Tengo experiencia y quiero mejorar resultados</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>¿Algo más que quieras contarnos sobre tus objetivos? <span class="optional">(opcional)</span></label>
+      <textarea id="objetivos_extra" placeholder="Cuéntanos cualquier detalle adicional..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 6: IDENTIDAD VISUAL -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step6">
+    <div class="step-header">
+      <div class="step-number">Paso 6</div>
+      <div class="step-title">Tu imagen de marca</div>
+      <div class="step-desc">Para crear contenido que se vea como TÚ, necesitamos conocer tu identidad visual.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Tienes logotipo? <span class="required">*</span></label>
+      <div class="check-grid">
+        <div class="check-item">
+          <input type="radio" id="logo_si" name="logo" value="si">
+          <label class="check-label" for="logo_si"><span class="check-icon">✓</span> Sí, lo tengo</label>
+        </div>
+        <div class="check-item">
+          <input type="radio" id="logo_no" name="logo" value="no">
+          <label class="check-label" for="logo_no"><span class="check-icon">✓</span> No tengo</label>
+        </div>
+      </div>
+      <div class="helper">Si lo tienes, nos lo puedes enviar después por WhatsApp o email (en PNG o SVG si es posible).</div>
+    </div>
+
+    <div class="field">
+      <label>Colores de tu marca <span class="optional">(opcional)</span></label>
+      <input type="text" id="colores" placeholder="Ej: Azul oscuro, blanco y dorado">
+      <div class="helper">Si no tienes colores definidos, te propondremos una paleta.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Qué tono quieres para tus publicaciones? <span class="required">*</span></label>
+      <div class="check-grid">
+        <div class="check-item">
+          <input type="checkbox" id="tono_profesional" name="tono" value="profesional">
+          <label class="check-label" for="tono_profesional"><span class="check-icon">✓</span> Profesional</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="tono_cercano" name="tono" value="cercano">
+          <label class="check-label" for="tono_cercano"><span class="check-icon">✓</span> Cercano</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="tono_divertido" name="tono" value="divertido">
+          <label class="check-label" for="tono_divertido"><span class="check-icon">✓</span> Divertido</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="tono_elegante" name="tono" value="elegante">
+          <label class="check-label" for="tono_elegante"><span class="check-icon">✓</span> Elegante</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="tono_tecnico" name="tono" value="tecnico">
+          <label class="check-label" for="tono_tecnico"><span class="check-icon">✓</span> Técnico / Experto</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="tono_juvenil" name="tono" value="juvenil">
+          <label class="check-label" for="tono_juvenil"><span class="check-icon">✓</span> Juvenil / Moderno</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Tienes fotos o vídeos propios de tu negocio? <span class="required">*</span></label>
+      <select id="material_visual">
+        <option value="">Selecciona</option>
+        <option value="si_mucho">Sí, tengo bastante material</option>
+        <option value="si_poco">Tengo algo pero poco</option>
+        <option value="no">No, necesito que me generéis contenido</option>
+      </select>
+      <div class="helper">Nos puedes enviar fotos y vídeos por WhatsApp o WeTransfer.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Hay alguna marca, competidor o cuenta que te guste como referencia? <span class="optional">(opcional)</span></label>
+      <textarea id="referencias" placeholder="Ej: Me gusta cómo lo hace @clinicatal en Instagram, o el estilo de la web de X empresa..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 7: PRESUPUESTO -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step7">
+    <div class="step-header">
+      <div class="step-number">Paso 7</div>
+      <div class="step-title">Inversión y plazos</div>
+      <div class="step-desc">Para diseñar la mejor estrategia necesitamos saber con qué presupuesto contamos.</div>
+    </div>
+
+    <div class="field">
+      <label>Presupuesto mensual para publicidad (anuncios) <span class="required">*</span></label>
+      <select id="presupuesto_ads">
+        <option value="">Selecciona rango</option>
+        <option value="0_100">Menos de 100€/mes</option>
+        <option value="100_300">100€ - 300€/mes</option>
+        <option value="300_500">300€ - 500€/mes</option>
+        <option value="500_1000">500€ - 1.000€/mes</option>
+        <option value="1000_plus">Más de 1.000€/mes</option>
+        <option value="no_se">No lo tengo claro, necesito asesoramiento</option>
+      </select>
+      <div class="helper">Este es el presupuesto que se invierte directamente en las plataformas (Meta Ads, Google Ads, TikTok Ads, etc.), NO incluye la gestión de Klovix.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Cuándo quieres empezar? <span class="required">*</span></label>
+      <select id="inicio">
+        <option value="">Selecciona</option>
+        <option value="inmediato">Lo antes posible</option>
+        <option value="semana">Esta semana</option>
+        <option value="2semanas">En 2 semanas</option>
+        <option value="mes">El mes que viene</option>
+        <option value="indefinido">No tengo fecha concreta</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>¿Qué plataformas te interesan más? <span class="required">*</span></label>
+      <div class="check-grid">
+        <div class="check-item">
+          <input type="checkbox" id="plat_ig" name="plataforma" value="instagram">
+          <label class="check-label" for="plat_ig"><span class="check-icon">✓</span> 📸 Instagram</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="plat_fb" name="plataforma" value="facebook">
+          <label class="check-label" for="plat_fb"><span class="check-icon">✓</span> 👥 Facebook</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="plat_tk" name="plataforma" value="tiktok">
+          <label class="check-label" for="plat_tk"><span class="check-icon">✓</span> 🎵 TikTok</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="plat_google" name="plataforma" value="google">
+          <label class="check-label" for="plat_google"><span class="check-icon">✓</span> 🔍 Google Ads</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="plat_li" name="plataforma" value="linkedin">
+          <label class="check-label" for="plat_li"><span class="check-icon">✓</span> 💼 LinkedIn</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="plat_yt" name="plataforma" value="youtube">
+          <label class="check-label" for="plat_yt"><span class="check-icon">✓</span> ▶️ YouTube</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="plat_nosé" name="plataforma" value="no_se">
+          <label class="check-label" for="plat_nosé"><span class="check-icon">✓</span> 🤷 No sé, asesoradme</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-primary" onclick="nextStep(); return false;">Siguiente →</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- STEP 8: ACCESOS Y LEGAL -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="step" id="step8">
+    <div class="step-header">
+      <div class="step-number">Paso 8</div>
+      <div class="step-title">Accesos y permisos</div>
+      <div class="step-desc">Último paso. Necesitamos saber qué accesos nos puedes dar y aceptar las condiciones.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Nos puedes dar acceso de administrador a tus redes? <span class="required">*</span></label>
+      <select id="accesos">
+        <option value="">Selecciona</option>
+        <option value="si_todas">Sí, a todas mis redes</option>
+        <option value="si_algunas">Sí, pero solo a algunas</option>
+        <option value="necesito_ayuda">Necesito ayuda para configurar los accesos</option>
+        <option value="no_tengo">No tengo redes aún</option>
+      </select>
+      <div class="helper">Necesitamos acceso para publicar contenido y gestionar anuncios en tu nombre.</div>
+    </div>
+
+    <div class="field">
+      <label>¿Tienes cuenta publicitaria en Meta (Facebook/Instagram)? <span class="required">*</span></label>
+      <select id="meta_ads">
+        <option value="">Selecciona</option>
+        <option value="si">Sí, ya tengo Business Manager y cuenta publicitaria</option>
+        <option value="si_no_se">Creo que sí pero no estoy seguro</option>
+        <option value="no">No, hay que crearla</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>¿Cómo prefieres comunicarte con nosotros? <span class="required">*</span></label>
+      <div class="check-grid">
+        <div class="check-item">
+          <input type="checkbox" id="com_whatsapp" name="comunicacion" value="whatsapp">
+          <label class="check-label" for="com_whatsapp"><span class="check-icon">✓</span> 💬 WhatsApp</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="com_email" name="comunicacion" value="email">
+          <label class="check-label" for="com_email"><span class="check-icon">✓</span> 📧 Email</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="com_llamada" name="comunicacion" value="llamada">
+          <label class="check-label" for="com_llamada"><span class="check-icon">✓</span> 📞 Llamada</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="com_cualquiera" name="comunicacion" value="cualquiera">
+          <label class="check-label" for="com_cualquiera"><span class="check-icon">✓</span> Me da igual</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field">
+      <label>Comentarios adicionales <span class="optional">(opcional)</span></label>
+      <textarea id="comentarios" placeholder="¿Algo más que debamos saber? ¿Alguna pregunta, preocupación, idea que tengas?"></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="info-box">
+      <span class="icon">🔒</span> <strong>Privacidad:</strong> Tus datos se utilizarán exclusivamente para diseñar y ejecutar tu estrategia de marketing. Cumplimos con el RGPD y la LOPDGDD. No compartiremos tu información con terceros.
+    </div>
+
+    <div class="field">
+      <div class="check-grid single-col">
+        <div class="check-item">
+          <input type="checkbox" id="acepto_condiciones">
+          <label class="check-label" for="acepto_condiciones"><span class="check-icon">✓</span> Acepto que Klovix utilice estos datos para diseñar mi estrategia de marketing digital</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="acepto_comunicaciones">
+          <label class="check-label" for="acepto_comunicaciones"><span class="check-icon">✓</span> Acepto recibir comunicaciones de Klovix sobre mi campaña por el canal seleccionado</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a href="javascript:void(0)" class="btn btn-secondary" onclick="prevStep(); return false;">← Atrás</a>
+      <a href="javascript:void(0)" class="btn btn-submit" onclick="submitForm(); return false;">✅ Enviar formulario</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- SUCCESS -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h2>¡Recibido!</h2>
+    <p>Gracias por completar el formulario. Nuestro equipo revisará tu información y te contactaremos en menos de 24 horas para programar una primera reunión.</p>
+    <div style="margin-top:32px; padding:20px; background:var(--card); border-radius:var(--radius); border:1px solid var(--border);">
+      <p style="color:var(--accent-light); font-weight:600; font-size:14px; margin-bottom:8px;">📞 ¿Tienes prisa?</p>
+      <p style="color:var(--text-dim); font-size:14px;">Escríbenos directamente por WhatsApp y agilizamos el proceso.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 8;
+
+const stepNames = [
+  'Tu negocio',
+  'Productos / servicios',
+  'Redes sociales',
+  'Cliente ideal',
+  'Objetivos',
+  'Imagen de marca',
+  'Inversión',
+  'Accesos y envío'
+];
+
+function updateProgress() {
+  const pct = (currentStep / totalSteps) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepLabel').textContent = 'Paso ' + currentStep + ' de ' + totalSteps;
+  document.getElementById('stepName').textContent = stepNames[currentStep - 1];
+}
+
+function showStep(n) {
+  var _s = document.querySelectorAll('.step'); for(var _i=0;_i<_s.length;_i++){_s[_i].classList.remove('active');}
+  document.getElementById('step' + n).classList.add('active');
+  currentStep = n;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextStep() {
+  if (currentStep < totalSteps) showStep(currentStep + 1);
+}
+
+function prevStep() {
+  if (currentStep > 1) showStep(currentStep - 1);
+}
+
+// Sector "otro" toggle
+document.getElementById('sector').onchange = function() {
+  document.getElementById('sectorOtroWrap').style.display = this.value === 'otro' ? 'block' : 'none';
+};
+
+function collectData() {
+  function getChecked(name) {
+    var els = document.querySelectorAll('input[name="'+name+'"]:checked');
+    var vals = [];
+    for (var i = 0; i < els.length; i++) { vals.push(els[i].value); }
+    return vals.join(', ');
+  }
+  return {
+    empresa: document.getElementById('empresa').value,
+    contacto: document.getElementById('contacto').value,
+    telefono: document.getElementById('telefono').value,
+    email: document.getElementById('email').value,
+    web: document.getElementById('web').value,
+    sector: document.getElementById('sector').value === 'otro' ? document.getElementById('sectorOtro').value : document.getElementById('sector').options[document.getElementById('sector').selectedIndex].text,
+    localidad: document.getElementById('localidad').value,
+    servicios: document.getElementById('servicios').value,
+    precios: document.getElementById('precios').value,
+    diferenciacion: document.getElementById('diferenciacion').value,
+    zona: document.getElementById('zona').options[document.getElementById('zona').selectedIndex].text,
+    instagram: document.getElementById('instagram').value,
+    facebook: document.getElementById('facebook').value,
+    tiktok: document.getElementById('tiktok').value,
+    linkedin: document.getElementById('linkedin').value,
+    youtube: document.getElementById('youtube').value,
+    gmb: document.getElementById('gmb').options[document.getElementById('gmb').selectedIndex].text,
+    edad: getChecked('edad'),
+    genero: getChecked('genero'),
+    busca_cliente: document.getElementById('busca_cliente').value,
+    intereses: document.getElementById('intereses').value,
+    objetivos: getChecked('objetivo'),
+    experiencia_ads: document.getElementById('experiencia_ads').options[document.getElementById('experiencia_ads').selectedIndex].text,
+    objetivos_extra: document.getElementById('objetivos_extra').value,
+    logo: getChecked('logo'),
+    colores: document.getElementById('colores').value,
+    tono: getChecked('tono'),
+    material_visual: document.getElementById('material_visual').options[document.getElementById('material_visual').selectedIndex].text,
+    referencias: document.getElementById('referencias').value,
+    presupuesto_ads: document.getElementById('presupuesto_ads').options[document.getElementById('presupuesto_ads').selectedIndex].text,
+    inicio: document.getElementById('inicio').options[document.getElementById('inicio').selectedIndex].text,
+    plataformas: getChecked('plataforma'),
+    accesos: document.getElementById('accesos').options[document.getElementById('accesos').selectedIndex].text,
+    meta_ads: document.getElementById('meta_ads').options[document.getElementById('meta_ads').selectedIndex].text,
+    comunicacion: getChecked('comunicacion'),
+    comentarios: document.getElementById('comentarios').value,
+  };
+}
+
+function submitForm() {
+  // Validate checkboxes
+  if (!document.getElementById('acepto_condiciones').checked) {
+    alert('Por favor, acepta las condiciones de uso de datos para continuar.');
+    return;
+  }
+
+  const data = collectData();
+  
+  // Check required fields
+  if (!data.empresa || !data.contacto || !data.telefono || !data.email) {
+    alert('Por favor, completa al menos los datos de contacto del Paso 1.');
+    showStep(1);
+    return;
+  }
+
+  var WEBHOOK_URL = 'https://mindexus.duckdns.org/webhook/klovix-nuevo-cliente';
+  
+  var submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) { submitBtn.textContent = '⏳ Enviando...'; }
+
+  data.fecha_envio = new Date().toISOString();
+  data.origen = 'formulario_alta_web';
+
+  function showSuccess() {
+    var steps = document.querySelectorAll('.step');
+    for (var i = 0; i < steps.length; i++) { steps[i].classList.remove('active'); }
+    document.querySelector('.progress-wrap').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  try {
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function() { showSuccess(); }).catch(function() { showSuccess(); });
+  } catch(e) { showSuccess(); }
+}
+</script>
+
+</body>
+</html>
